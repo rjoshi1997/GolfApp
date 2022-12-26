@@ -8,7 +8,10 @@ import {
   TextInput,
   View,
   Image,
-  Pressable
+  Pressable,
+  SafeAreaView, 
+  ScrollView,
+  StatusBar
 } from 'react-native';
 
 const Item = ({ row }) => (
@@ -45,12 +48,13 @@ const Item = ({ row }) => (
             {row.Description.substring(0, 150) + '...'}
           </Text>  
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
-        </View>
-    </View>
-    
+      </View>
 );
+
+const LineSeparator = () => {
+  return <View style={{ height: 1, backgroundColor: "grey",marginHorizontal:10}} />;
+};
+
 const renderItem = ({ item }) => (
   <Item row={item} />
 );
@@ -72,6 +76,7 @@ const HomeScreen = props => {
           data.forEach(rows => {
               contentData.push(
                       {
+                          'id':rows.id,
                           'Subject':rows.attributes.Subject,
                           'Description':rows.attributes.Description,
                           'Link':rows.attributes.Link,
@@ -96,24 +101,30 @@ const HomeScreen = props => {
   }
   
   return (
-    <View>
+    <View style={styles.container}>
       <Image source={require('../../../assets/HomeScrrenMainImage.jpg')} />
-      <Text class="border-solid" style={styles.titleText}>Latest News</Text>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{ flex: 1, height: 2, backgroundColor: 'black'}} />
-      </View>
-      <View>
-        <FlatList
-        data={contentDetails}
-        renderItem={renderItem}
-        >
-        </FlatList>
+      <View style={styles.container}>
+        <ScrollView>
+        <Text class="border-solid" style={styles.titleText}>Latest News</Text>
+        <LineSeparator />
+          <FlatList
+          data={contentDetails}
+          renderItem={renderItem}
+          ItemSeparatorComponent={LineSeparator}
+          keyExtractor={(item) => item.id}
+          >
+          </FlatList>
+        </ScrollView>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container : {
+    flex: 1,
+    backgroundColor:"white",
+  },
   baseText: {
     fontFamily: "Cochin"
   },

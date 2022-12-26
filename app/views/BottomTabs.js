@@ -3,6 +3,7 @@ import { Image,Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './TabScreens/HomeScreen';
+import ProfileScreen from './TabScreens/ProfileScreen';
 
 function TabContantScreen(obj) {
   return (
@@ -21,9 +22,7 @@ function Home(obj){
 
 function Profile(){
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-      <View style={{flex: 1, height: 5, backgroundColor: 'black'}} />
-    </View>
+    <ProfileScreen />
   )
 }
 
