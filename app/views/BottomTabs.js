@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Image,Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import getContent from '../models/Content';
 import HomeScreen from './TabScreens/HomeScreen';
 
 function TabContantScreen(obj) {
