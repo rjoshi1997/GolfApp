@@ -14,9 +14,8 @@ function TabContantScreen(obj) {
 }
 
 function Home(obj){
-  const content = require('../../contentData.json')
   return (
-      <HomeScreen contentDetails={content}></HomeScreen>
+      <HomeScreen></HomeScreen>
   )
 }
 
@@ -25,8 +24,6 @@ function Profile(){
     <ProfileScreen />
   )
 }
-
-
 
 const Tab = createBottomTabNavigator();
 const BottomTabs = props => {
@@ -69,7 +66,11 @@ const BottomTabs = props => {
       <Tab.Navigator>
         <Tab.Screen name='Explore' component={TabContantScreen} />
         <Tab.Screen name='News' component={TabContantScreen} />
-        <Tab.Screen name='Home' component={Home} />
+        <Tab.Screen name='Home' component={Home} listeners={{
+            tabPress: (e) => {
+              
+            },
+          }}/>
         <Tab.Screen name='Courses' component={TabContantScreen} />
         <Tab.Screen name='Profile' component={Profile} />
       </Tab.Navigator>

@@ -11,60 +11,114 @@ import {
   Pressable,
   SafeAreaView, 
   ScrollView,
-  StatusBar
+  StatusBar,
+  RefreshControl,
+  TouchableOpacity,
+  Modal
 } from 'react-native';
-
-const Item = ({ row }) => (
-  <View style={{flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',padding: 10}}>
-    <View style={{
-      flexDirection: 'row',
-      flexWrap: 'wrap',}}>
-          <Text
-            style={{
-              width: '65%',
-              fontSize: 16,
-              fontWeight: '500',
-              alignItems: 'center',
-            }}>
-            {row.Subject}
-          </Text>
-          <Image
-          source={{uri: row.Image}}
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius:10,
-          }}
-        />
-          <Text
-            style={{
-              width: '100%',
-              fontSize: 12,
-              marginTop: 10,
-              marginBottom:10,
-            }}>
-            {row.Description.substring(0, 150) + '...'}
-          </Text>  
-        </View>
-      </View>
-);
 
 const LineSeparator = () => {
   return <View style={{ height: 1, backgroundColor: "grey",marginHorizontal:10}} />;
 };
 
-const renderItem = ({ item }) => (
-  <Item row={item} />
-);
-
 const HomeScreen = props => {
-  const [contentDetails,setContentDetails] = useState([])
-  const [data, setData] = useState([]);
+  const [isModalSignUpVisible, setModalSignUpVisible] = useState(true);
+  let [contentDetails,setContentDetails] = useState([])
+  let [data, setData] = useState([]);
   const [reloadAgain, setReloadAgain] = useState(false);
   const CONTENT_GROUP_URL = 'http://localhost:1337/api/contents?populate=*&filters[content_group][name][$eq]=Home';
 
+  const Item = ({ row }) => (
+    <View style={{flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',padding: 10}}>
+      <View style={{
+        flexDirection: 'row',
+        flexWrap: 'wrap',}}>
+            <Text
+              style={{
+                width: '65%',
+                fontSize: 16,
+                fontWeight: '500',
+                alignItems: 'center',
+              }}>
+              {row.Subject}
+            </Text>
+            <Image
+            source={{uri: row.Image}}
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius:10,
+            }}
+          />
+            <Text
+              style={{
+                width: '100%',
+                fontSize: 12,
+                marginTop: 10,
+                marginBottom:10,
+              }}>
+              {row.Description.substring(0, 150) + '...'}
+            </Text>  
+          </View>
+        </View>
+  );
+  
+  const LineSeparator = () => {
+    return <View style={{ height: 1, backgroundColor: "grey",marginHorizontal:10}} />;
+  };
+  
+  function itemModal(obj) {
+    setModalSignUpVisible(!isModalSignUpVisible);
+  }
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => itemModal(item)} >          
+        <Item row={item} />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalSignUpVisible}
+          onRequestClose={() => {
+            setModalSignUpVisible(!isModalSignUpVisible);
+          }}
+          >
+            <View style={styles.modalContainer}>
+            
+              <View style={styles.modalView}>
+              
+                <View style={styles.modalHeaderCloseButton}>
+                    <Pressable
+                      onPress={() => setModalSignUpVisible(!isModalSignUpVisible)}
+                    >
+                    <Text style={{fontSize:18}}>X</Text>
+                  </Pressable>
+                </View>
+                <View style={styles.container}>
+                <ScrollView>
+                  <View style={{paddingTop:20,paddingLeft:30}}>
+                    <Image source={{uri: item.Image}}
+                        style={{
+                          width: 300,
+                          height: 300,
+                          borderRadius:10,
+                        }}>
+                      </Image>
+                  </View>
+
+                  <View style={styles.container}>
+                      <Text style={{fontSize:20,padding:20,fontWeight:'bold'}}>{item.Subject}</Text>
+                      <LineSeparator />
+                      <Text style={{fontSize:14,padding:20}}>{item.Description}</Text>
+                  </View>
+                </ScrollView>
+                </View>
+                </View>
+              </View>
+          </Modal>
+    </TouchableOpacity>
+  );
   const fetchData = async () => {
     try {
       await fetch(CONTENT_GROUP_URL)
@@ -72,7 +126,7 @@ const HomeScreen = props => {
         .then((data) => setData(data.data));
 
         if(data){
-          const contentData = [];
+          let contentData = [];
           data.forEach(rows => {
               contentData.push(
                       {
@@ -86,11 +140,17 @@ const HomeScreen = props => {
                   )
           });
           setContentDetails(contentData)
+          setReloadAgain(false);
         }
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleRefresh = () => {
+    setReloadAgain(true);
+    fetchData();
+  }
 
   useEffect(() => {
     fetchData();
@@ -99,22 +159,22 @@ const HomeScreen = props => {
   if(!contentDetails.length){
     fetchData()
   }
-  
+
   return (
     <View style={styles.container}>
       <Image source={require('../../../assets/HomeScrrenMainImage.jpg')} />
       <View style={styles.container}>
-        <ScrollView>
-        <Text class="border-solid" style={styles.titleText}>Latest News</Text>
-        <LineSeparator />
+          <Text class="border-solid" style={styles.titleText}>Latest News</Text>
+          <LineSeparator />
           <FlatList
           data={contentDetails}
           renderItem={renderItem}
           ItemSeparatorComponent={LineSeparator}
           keyExtractor={(item) => item.id}
+          refreshing={reloadAgain}
+          onRefresh={handleRefresh}
           >
           </FlatList>
-        </ScrollView>
       </View>
     </View>
   );
@@ -139,6 +199,31 @@ const styles = StyleSheet.create({
   },
   pressedItem: {
     opacity: 0.5,
+  },
+  modalContainer: {
+    flex: 1,
+    marginTop: 50,
+  },
+  modalView: {
+    flex: 1,
+    height:600,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 0,
+    // alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 15
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalHeaderCloseButton: {
+    alignItems:'flex-end',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
 });
 
