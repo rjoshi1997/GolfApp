@@ -22,9 +22,11 @@ const LineSeparator = () => {
 };
 
 const HomeScreen = props => {
-  const [isModalSignUpVisible, setModalSignUpVisible] = useState(true);
+  const video = React.useRef(null);
+  const [isModalVisible, setModalVisible] = useState(false);
   let [contentDetails,setContentDetails] = useState([])
   let [data, setData] = useState([]);
+  let [currentItem, setCurrentItem] = useState([]);
   const [reloadAgain, setReloadAgain] = useState(false);
   const CONTENT_GROUP_URL = 'http://localhost:1337/api/contents?populate=*&filters[content_group][name][$eq]=Home';
 
@@ -52,7 +54,7 @@ const HomeScreen = props => {
               borderRadius:10,
             }}
           />
-            <Text
+            {/* <Text
               style={{
                 width: '100%',
                 fontSize: 12,
@@ -60,7 +62,7 @@ const HomeScreen = props => {
                 marginBottom:10,
               }}>
               {row.Description.substring(0, 150) + '...'}
-            </Text>  
+            </Text>   */}
           </View>
         </View>
   );
@@ -70,18 +72,20 @@ const HomeScreen = props => {
   };
   
   function itemModal(obj) {
-    setModalSignUpVisible(!isModalSignUpVisible);
+    setCurrentItem(obj)
+    setModalVisible(!isModalVisible);
   }
-  
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => itemModal(item)} >          
-        <Item row={item} />
-        <Modal
+
+  const ModalContent = () => {
+    
+    return (
+      <Modal
           animationType="slide"
           transparent={true}
-          visible={isModalSignUpVisible}
+          visible={isModalVisible}
+          keyExtractor={(currentItem, index) => currentItem.id}
           onRequestClose={() => {
-            setModalSignUpVisible(!isModalSignUpVisible);
+            setModalVisible(!isModalVisible);
           }}
           >
             <View style={styles.modalContainer}>
@@ -90,7 +94,7 @@ const HomeScreen = props => {
               
                 <View style={styles.modalHeaderCloseButton}>
                     <Pressable
-                      onPress={() => setModalSignUpVisible(!isModalSignUpVisible)}
+                      onPress={() => setModalVisible(!isModalVisible)}
                     >
                     <Text style={{fontSize:18}}>X</Text>
                   </Pressable>
@@ -98,7 +102,7 @@ const HomeScreen = props => {
                 <View style={styles.container}>
                 <ScrollView>
                   <View style={{paddingTop:20,paddingLeft:30}}>
-                    <Image source={{uri: item.Image}}
+                    <Image source={{uri: currentItem.Image}}
                         style={{
                           width: 300,
                           height: 300,
@@ -108,15 +112,22 @@ const HomeScreen = props => {
                   </View>
 
                   <View style={styles.container}>
-                      <Text style={{fontSize:20,padding:20,fontWeight:'bold'}}>{item.Subject}</Text>
+                      <Text style={{fontSize:20,padding:20,fontWeight:'bold'}}>{currentItem.Subject}</Text>
                       <LineSeparator />
-                      <Text style={{fontSize:14,padding:20}}>{item.Description}</Text>
+                      <Text style={{fontSize:14,padding:20}}>{currentItem.Description}</Text>
                   </View>
                 </ScrollView>
                 </View>
                 </View>
               </View>
           </Modal>
+    );
+  };
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => itemModal(item)} >          
+        <Item row={item} />
+        <ModalContent />
     </TouchableOpacity>
   );
   const fetchData = async () => {
