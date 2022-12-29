@@ -1,5 +1,5 @@
-import { BottomTabBarHeightCallbackContext } from '@react-navigation/bottom-tabs';
-import React, { useCallback, useEffect, useState } from 'react';
+import { BottomTabBarHeightCallbackContext } from "@react-navigation/bottom-tabs";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   FlatList,
@@ -9,20 +9,17 @@ import {
   View,
   Image,
   Pressable,
-  SafeAreaView, 
+  SafeAreaView,
   ScrollView,
   StatusBar,
   TouchableOpacity,
   Modal,
-  Alert
-} from 'react-native';
-import CreateAccountScreen from './CreateAccountScreen';
+  Alert,
+} from "react-native";
+import CreateAccountScreen from "./CreateAccountScreen";
 
-const ProfileScreen = props => {
-  
-  return (
-   <CreateAccountScreen />
-  );
+const ProfileScreen = (props) => {
+  return <CreateAccountScreen></CreateAccountScreen>;
 };
 
 export default ProfileScreen;

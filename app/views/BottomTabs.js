@@ -1,81 +1,63 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Image,Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './TabScreens/HomeScreen';
-import ProfileScreen from './TabScreens/ProfileScreen';
+import React, { useCallback, useEffect, useState } from "react";
+import { Image, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "./TabScreens/HomeScreen";
+import ProfileScreen from "./TabScreens/ProfileScreen";
+import WebView from "react-native-webview";
 
 function TabContantScreen(obj) {
   return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>{obj.route.name}</Text>
-      </View>
-  )
-}
-
-function Home(obj){
-  return (
-      <HomeScreen></HomeScreen>
-  )
-}
-
-function Profile(){
-  return (
-    <ProfileScreen />
-  )
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>{obj.route.name}</Text>
+    </View>
+  );
 }
 
 const Tab = createBottomTabNavigator();
-const BottomTabs = props => {
-  // const [activeGroups,setActiveGroups] = useState([])
-  // const [data, setData] = useState([]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       await fetch(`http://localhost:1337/api/content-groups`)
-  //         .then((response) => response.json())
-  //         .then((data) => setData(data.data));
 
-  //         if(data.length){
-  //           const sortData = data.sort((a,b) => 
-  //               a.attributes.sort_order - b.attributes.sort_order
-  //           );
+function Home(obj) {
+  return <HomeScreen></HomeScreen>;
+}
 
-  //           const activeData = [];
-  //           sortData.forEach(rows => {
-  //               if(rows.attributes.is_active && rows.id){
-  //                   activeData.push(
-  //                           {
-  //                               'id':rows.id,
-  //                               'name':rows.attributes.name
-  //                           }
-  //                       )
-  //               }
-  //           });
-  //           setActiveGroups(activeData)
-  //         }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
- 
+function Profile() {
+  return <ProfileScreen />;
+}
+
+function News() {
+  return (
+    <View style={{ flex: 1 }}>
+      <WebView
+        source={{ uri: "https://www.pgatour.com/champions/news.html" }}
+      />
+    </View>
+  );
+}
+
+function Courses() {
+  return (
+    <View style={{ flex: 1 }}>
+      <WebView
+        source={{
+          uri: "https://www.pgatour.com/champions/tournaments/schedule.html",
+        }}
+      />
+    </View>
+  );
+}
+
+const BottomTabs = (props) => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name='Explore' component={TabContantScreen} />
-        <Tab.Screen name='News' component={TabContantScreen} />
-        <Tab.Screen name='Home' component={Home} listeners={{
-            tabPress: (e) => {
-              
-            },
-          }}/>
-        <Tab.Screen name='Courses' component={TabContantScreen} />
-        <Tab.Screen name='Profile' component={Profile} />
+        <Tab.Screen name="Explore" component={TabContantScreen} />
+        <Tab.Screen name="News" component={News} />
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Courses" component={Courses} />
+        <Tab.Screen name="Profile" component={Profile} />
       </Tab.Navigator>
     </NavigationContainer>
   );
 };
 
-export default BottomTabs
+export default BottomTabs;
